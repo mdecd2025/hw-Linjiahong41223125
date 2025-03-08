@@ -182,7 +182,76 @@ brython_div1 &lt;= "7. " + html.A("41223147", href="https://mdecd2025.github.io/
 <p></p>
 <p><span>使用Brython尋找2a未加入團隊之學生</span></p>
 <p><span>使用 X 的AI進行程式修改及優化</span></p>
-<p><span><iframe allowfullscreen="allowfullscreen" height="314" src="//www.youtube.com/embed/QimDgDDa9ho" width="560"></iframe></span></p><br />W1 << <a href='W1.html'>Previous</a> <a href='Homework.html'>Next</a> >> Homework</div>
+<p><span>影片看看就好，先前錄的問問題的影片損毀，所以放了一個回顧提問內容的影片</span></p>
+<p><span><iframe allowfullscreen="allowfullscreen" height="314" src="//www.youtube.com/embed/QimDgDDa9ho" width="560"></iframe></span></p>
+<p><span>修改後的程式</span></p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">import urllib.request
+
+# 已分組學員帳號集合
+GROUPED_ACCOUNTS = {
+    '41223154', '41271125', '41271158', '41271146', '41271131', 'CYG41223103', '41223102',
+    '41023128', '41023137', '41223137', '41223157', '41223156', 'otakuyoyo', '41223141',
+    '41223113', 'kim41223114', 'joeisme1208', '41223116', '41223144', '41223140', '41223143',
+    '41223138', '41223134', '41223136', 'zhe41223118', 'Spirit0224', 'yuhao-08', '41223158',
+    'Ren911308', '41223150', 'Manto8', 'CYA41223106', 'yan21ed', 'Lin41223107', '41223133',
+    'hong41223129', '41223110', '41223147', 'Linjiahong41223125', 'CHN41223132',
+    'Yu-Fang-Hong', '41023111', 'yckaooooo', 'kolas911205', '41023105', '40932134', '41223104',
+    'yan41223101', '41223105', '41223153', '41223120', '41223152', 'G8People',
+    'WSE41223112', '41223146', '41223119'
+}
+
+# 從 URL 讀取學生資料
+def fetch_student_data(url):
+    try:
+        response = urllib.request.urlopen(url)
+        data = response.read()
+        # 檢查資料類型，若為 bytes 則解碼
+        if isinstance(data, bytes):
+            data = data.decode('utf-8')
+        return data.splitlines(), None
+    except Exception as e:
+        return None, f"無法讀取資料：{str(e)}"
+
+# 解析學生資料並找出未分組學員
+def find_ungrouped_students(data_lines):
+    if not data_lines or len(data_lines) &lt;= 1:
+        return [], "學員名單讀取失敗或無有效資料"
+    
+    all_students = data_lines[1:]  # 跳過標題行
+    total_count = len(all_students)
+    ungrouped = []
+
+    for line in all_students:
+        parts = line.split()  # 用空格分割學號和帳號
+        student_id = parts[0]  # 第一欄為學號
+        account = parts[1] if len(parts) &gt; 1 else student_id  # 若無帳號，用學號代替
+        account = account.strip()
+
+        # 若帳號不在已分組集合中，記錄學號
+        if account not in GROUPED_ACCOUNTS:
+            ungrouped.append(student_id)
+
+    return ungrouped, f"總共有 {total_count} 名學員"
+
+# 主程式
+url = "https://mde.tw/list/2a.txt"
+data_lines, error = fetch_student_data(url)
+
+# 儲存輸出結果
+output = []
+if data_lines is not None:
+    ungrouped, message = find_ungrouped_students(data_lines)
+    output.append(message)
+    output.append("未分組學員學號清單：")
+    for student_id in ungrouped:
+        output.append(student_id)
+else:
+    output.append(error)
+
+# 在 CMSIMDE 中，print 會顯示在控制台，若需網頁顯示，需返回字串
+for line in output:
+    print(line)</pre>
+<p></p><br />W1 << <a href='W1.html'>Previous</a> <a href='Homework.html'>Next</a> >> Homework</div>
         
     <!-- footer -->
       <div class="container">
